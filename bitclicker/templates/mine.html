@@ -1,0 +1,164 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>Welcome to the mining pool.</h1>
+<hr>
+    <div id="ad"/>
+
+    <script type="text/javascript">
+     $(function() {
+        Noty = window.noty;
+
+        RB = window.ReactBootstrap;
+
+        Panel = ReactBootstrap.Panel;
+
+        Grid = RB.Grid;
+
+        update = React.addons.update;
+        Col = RB.Col;
+
+        Row = RB.Row;
+
+        Button = RB.Button;
+
+        Bitcoin = React.createClass({
+        bitcoinStyle: {
+            "border": "20px",
+            "borderRadius": "50%",
+            "display": "table",
+            "width": "200px",
+            "height": "200px",
+            "fontSize": "96px"
+        },
+        render: function() {
+            return React.createElement(Button, {
+            "style": this.bitcoinStyle
+            }, "฿");
+        }
+        });
+
+        Item = React.createClass({
+        buy: function(item) {
+            $.get("/users/buy/"+item, function(data) {
+                this.props.onPurchase(data);
+                alert($.parseJSON(data).result);
+            }.bind(this));
+        },
+        render: function() {
+            var buyButton;
+            buyButton = React.createElement(Button, {"onClick": this.buy.bind(null, this.props.name)}, " ", this.props.currency, " ", this.props.price);
+            return React.createElement(Panel, {
+            "footer": buyButton
+            }, React.createElement("p", {
+            "className": "text-center"
+            }, this.props.name), React.createElement("hr", null), React.createElement("img", {
+            "style": {
+                width: 120,
+                height: 120
+            },
+            "src": this.props.display
+            }));
+        }
+        });
+
+        ItemStore = React.createClass({
+        render: function() {
+            return React.createElement(Panel, {
+            "header": this.props.title
+            }, this.props.items.map((function(_this) {
+            return function(item) {
+                return React.createElement(Col, {
+                "key": item.name,
+                "xs": 4.
+                }, React.createElement(Item, React.__spread({}, _this.props, item)));
+            };
+            })(this)));
+        }
+        });
+
+        BitClicker = React.createClass({
+        getInitialState: function() {
+            return {
+            btc: 0,
+            usd: 0,
+            energyCost: 0
+            };
+        },
+        updateStats: function(data) {
+            data = $.parseJSON(data);
+            this.setState(data);
+        },
+        componentWillMount: function() {
+            $.get("/users/currency", function(data) {
+                this.updateStats(data);
+            }.bind(this));
+        },
+        mine: function() {
+            if (this.state.usd > this.state.energyCost) {
+                $.get("/users/mine/1", function(data) {
+                    this.updateStats(data);
+                }.bind(this));
+            } else {
+                alert("You do not have enough usd to mine any more bitcoins!");
+            }
+        },
+        deepWebItems: [
+            {
+            name: "Money ($100)",
+            price: 0.5,
+            display: "/static/money.svg"
+            },
+            {
+            name: "Random DDoS",
+            price: 0.05,
+            display: "/static/ddos.svg"
+            }
+        ],
+        webItems: [
+            {
+            name: "Flag",
+            price: 300,
+            display: "/static/flag.svg"
+            }
+        ],
+        render: function() {
+            return React.createElement(Grid, null, React.createElement(Row, null, React.createElement(Col, {
+            "xs": 3.,
+            "xsOffset": 1.
+            }, React.createElement(Panel, null, React.createElement("h4", {
+            "className": "text-center"
+            }, "Mine the Bitcoin!"), React.createElement("span", {
+            "onClick": this.mine,
+            "className": "center-block",
+            "style": {
+                display: "table"
+            }
+            }, React.createElement(Bitcoin, null)))), React.createElement(Col, {
+            "xs": 6.,
+            "xsOffset": 1.
+            }, React.createElement(ItemStore, {
+            "items": this.deepWebItems,
+            "onPurchase": this.updateStats,
+            "title": "Deep Web Marketplace",
+            "currency": "฿"
+            }))), React.createElement(Row, null, React.createElement(Col, {
+            "xs": 3.,
+            "xsOffset": 1.
+            }, React.createElement(Panel, {
+            "header": "Currency"
+            }, React.createElement("p", null, this.state.btc, " BTC "), React.createElement("p", null, this.state.usd, " USD "))), React.createElement(Col, {
+            "xs": 6.,
+            "xsOffset": 1.
+            }, React.createElement(ItemStore, {
+            "items": this.webItems,
+            "onPurchase": this.updateStats,
+            "title": "CyberStakes Store",
+            "currency": "$"
+            }))));
+        }
+        });
+
+         ReactDOM.render(React.createElement(BitClicker, null), document.getElementById("ad"));
+      });
+    </script>
+{% endblock %}

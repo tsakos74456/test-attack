@@ -1,0 +1,62 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>{% block page_title %}Bit Clicker{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{% endblock %}">
+  <meta name="author" content="{% block meta_author %}{% endblock %}">
+
+  <meta name="viewport" content="width=device-width">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='libs/font-awesome4/css/font-awesome.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='libs/bootstrap/dist/css/bootstrap.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  {% block css %}{% endblock %}
+
+</head>
+<body class="{% block body_class %}{% endblock %}">
+{% block body %}
+{% with form=form %}
+{% include "nav.html" %}
+{% endwith %}
+
+<script type="text/javascript" src="{{ url_for('static', filename='libs/jQuery/dist/jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='libs/bootstrap/dist/js/bootstrap.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='libs/react/react.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='libs/react/react-dom.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='libs/react-bootstrap/react-bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='libs/noty/jquery.noty.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/plugins.js') }}"></script>
+
+<header>{% block header %}{% endblock %}</header>
+<div class="{% block content_class %}container{% endblock content_class %}">
+
+  <div role="main">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="row">
+      <div class="col-md-12">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          <a class="close" title="Close" href="#" data-dismiss="alert">&times;</a>
+         {{message}}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+
+</div>
+
+{% include "footer.html" %}
+
+{% block js %}{% endblock %}
+{% endblock %}
+</body>
+</html>
